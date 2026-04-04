@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>生日快乐 🎂</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    background: radial-gradient(circle at top, #ffe6f0, #ffd6ec, #ffcce6);
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* 容器 */
+.container {
+    text-align: center;
+    position: relative;
+}
+
+/* 礼物盒 */
+.gift {
+    width: 220px;
+    height: 220px;
+    position: relative;
+    cursor: pointer;
+    animation: bounce 2s infinite ease-in-out;
+}
+
+@keyframes bounce {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* 盒子 */
+.box {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(145deg, #ff7eb3, #ff4d88);
+    border-radius: 20px;
+    position: absolute;
+    box-shadow: 0 20px 40px rgba(255, 105, 180, 0.4);
+}
+
+/* 丝带 */
+.ribbon {
+    position: absolute;
+    background: #fff;
+}
+
+.ribbon.vertical {
+    width: 30px;
+    height: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.ribbon.horizontal {
+    height: 30px;
+    width: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* 蝴蝶结 */
+.bow {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.bow::before, .bow::after {
+    content: "";
+    width: 60px;
+    height: 60px;
+    background: #ff4d88;
+    border-radius: 50%;
+    position: absolute;
+}
+
+.bow::before { left: -40px; }
+.bow::after { right: -40px; }
+
+/* 打开状态 */
+.open .box {
+    transform: scaleY(0.5);
+    transition: 0.8s;
+    opacity: 0.6;
+}
+
+.open .gift {
+    animation: none;
+}
+
+/* 蛋糕 */
+.cake {
+    width: 160px;
+    height: 180px;
+    position: absolute;
+    left: 50%;
+    bottom: -50px;
+    transform: translateX(-50%) scale(0);
+    transition: 1.2s ease;
+}
+
+.open .cake {
+    transform: translateX(-50%) translateY(-220px) scale(1);
+}
+
+/* 蛋糕层 */
+.layer {
+    width: 160px;
+    height: 60px;
+    background: #ff99cc;
+    border-radius: 20px;
+    margin-top: 10px;
+    box-shadow: inset 0 -10px #ff66aa;
+}
+
+/* 蜡烛 */
+.candle {
+    width: 10px;
+    height: 40px;
+    background: #fff;
+    position: absolute;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 3px;
+}
+
+.flame {
+    width: 14px;
+    height: 20px;
+    background: radial-gradient(circle, #fff, #ffcc00, orange);
+    border-radius: 50%;
+    position: absolute;
+    top: -18px;
+    left: -2px;
+    animation: flicker 0.3s infinite alternate;
+}
+
+@keyframes flicker {
+    from { transform: scale(1); }
+    to { transform: scale(1.2); }
+}
+
+/* 生日文字 */
+.message {
+    position: absolute;
+    top: -120px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 48px;
+    color: white;
+    opacity: 0;
+    text-shadow: 0 0 20px #ff66cc, 0 0 40px #ff99dd;
+    transition: 1.5s;
+}
+
+.open .message {
+    opacity: 1;
+}
+
+/* 粒子 */
+.particle {
+    position: absolute;
+    font-size: 20px;
+    animation: floatUp 3s linear infinite;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(0) scale(1); opacity: 1;}
+    to { transform: translateY(-600px) scale(0.5); opacity: 0;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="scene">
+    <div class="message">生日快乐 🎂</div>
+
+    <div class="gift" id="gift">
+        <div class="box"></div>
+        <div class="ribbon vertical"></div>
+        <div class="ribbon horizontal"></div>
+        <div class="bow"></div>
+    </div>
+
+    <div class="cake">
+        <div class="candle">
+            <div class="flame"></div>
+        </div>
+        <div class="layer"></div>
+        <div class="layer"></div>
+        <div class="layer"></div>
+    </div>
+</div>
+
+<script>
+const gift = document.getElementById("gift");
+const scene = document.getElementById("scene");
+
+gift.addEventListener("click", () => {
+    scene.classList.add("open");
+    explode();
+});
+
+/* 爆炸粒子 */
+function explode() {
+    for (let i = 0; i < 40; i++) {
+        let p = document.createElement("div");
+        p.className = "particle";
+        p.innerHTML = Math.random() > 0.5 ? "💖" : "✨";
+
+        p.style.left = Math.random()*100 + "vw";
+        p.style.top = "80vh";
+        p.style.animationDuration = (2 + Math.random()*2) + "s";
+
+        document.body.appendChild(p);
+
+        setTimeout(()=>p.remove(),4000);
+    }
+}
+</script>
+
+</body>
+</html>
