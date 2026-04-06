@@ -53,6 +53,16 @@ body {
     z-index: 0;
 }
 
+#ripple-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1000;
+}
+
 #bg-container {
     position: fixed;
     top: 0;
@@ -62,6 +72,8 @@ body {
     z-index: -1;
     overflow: hidden;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
 }
 
 .sun {
@@ -1081,6 +1093,8 @@ body {
     height: 100%;
     z-index: 1;
     pointer-events: auto;
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
 }
 
 canvas {
@@ -1484,6 +1498,120 @@ canvas {
         max-height: 40vh;
     }
 }
+
+/* Are you ready? 弹窗样式 */
+.ready-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.ready-modal-content {
+    background: white;
+    padding: 60px 80px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalBounce 0.6s ease-out;
+}
+
+@keyframes modalBounce {
+    0% {
+        transform: scale(0.5);
+        opacity: 0;
+    }
+    70% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.ready-modal-content h1 {
+    font-size: 48px;
+    color: #667eea;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.ready-modal-content p {
+    font-size: 24px;
+    color: #555;
+    margin-bottom: 40px;
+}
+
+.start-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 15px 50px;
+    font-size: 24px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    font-weight: bold;
+}
+
+.start-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.start-button:active {
+    transform: translateY(0);
+}
+
+.birthday-input {
+    width: 100%;
+    max-width: 300px;
+    padding: 15px 20px;
+    font-size: 24px;
+    border: 2px solid #667eea;
+    border-radius: 10px;
+    text-align: center;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    letter-spacing: 2px;
+}
+
+.birthday-input:focus {
+    border-color: #764ba2;
+    box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+}
+
+.birthday-input::placeholder {
+    color: #aaa;
+    letter-spacing: normal;
+}
+
+@media (max-width: 768px) {
+    .ready-modal-content {
+        padding: 40px 30px;
+        margin: 20px;
+    }
+    
+    .ready-modal-content h1 {
+        font-size: 32px;
+    }
+    
+    .ready-modal-content p {
+        font-size: 18px;
+    }
+    
+    .start-button {
+        padding: 12px 40px;
+        font-size: 20px;
+    }
+}
 </style>
 
 <script type="importmap">
@@ -1497,6 +1625,24 @@ canvas {
 </head>
 
 <body>
+<!-- 水波波纹canvas -->
+<canvas id="ripple-canvas"></canvas>
+<!-- 背景音乐元素 -->
+<audio id="music1" src="music1.mp3" loop preload="auto"></audio>
+<audio id="music2" src="music2.mp3" loop preload="auto"></audio>
+<audio id="music4" src="music4.mp3" loop preload="auto"></audio>
+<audio id="music5" src="music5.mp3" loop preload="auto"></audio>
+
+<!-- 生日验证弹窗 -->
+<div id="ready-modal" class="ready-modal">
+    <div class="ready-modal-content">
+        <h1>Enter your birthday for verification</h1>
+        <p style="color: #888; margin-bottom: 15px;">(e.g.: 20260407)</p>
+        <input type="text" id="birthday-input" class="birthday-input" placeholder="请输入生日" maxlength="8">
+        <p id="error-message" style="color: #ff4444; margin-top: 10px; display: none;">生日不正确，请重新输入</p>
+        <button id="start-button" class="start-button" style="margin-top: 20px;">验证</button>
+    </div>
+</div>
 <div id="bg-container">
     <div class="sun"></div>
     <div class="cloud cloud-1"></div>
@@ -1782,7 +1928,7 @@ canvas {
 
 <div id="snake-game-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center;">
     <button id="close-snake-modal" style="position: absolute; top: 20px; right: 20px; background-color: #FF69B4; color: white; border: none; border-radius: 5px; padding: 10px 20px; cursor: pointer; font-size: 16px;">&times;</button>
-    <h2 style="color: white; margin-bottom: 20px; font-size: 28px;">贪吃蛇游戏</h2>
+    <h2 style="color: white; margin-bottom: 20px; font-size: 28px;">Pythonの试炼</h2>
     <div class="game-container" style="border: 2px solid #333; border-radius: 5px; overflow: hidden; box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);">
         <div class="score-board" style="background-color: #333; color: white; padding: 10px 20px; font-size: 18px; font-weight: bold; text-align: center;">
             得分: <span id="snake-score">0</span>
@@ -1821,6 +1967,134 @@ import { FontLoader } from 'three/addons/loaders/FontLoader.js';
 import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
 
 console.log('=== 礼盒专业升级版启动 ===');
+
+// 音乐控制
+const music = {
+    music1: document.getElementById('music1'),
+    music2: document.getElementById('music2'),
+    music4: document.getElementById('music4'),
+    music5: document.getElementById('music5'),
+    currentMusic: null,
+    
+    stopAll() {
+        this.music1.pause();
+        this.music2.pause();
+        this.music4.pause();
+        this.music5.pause();
+    },
+    
+    play(name) {
+        // 如果就是要播放当前音乐，直接返回
+        if (this.currentMusic === name) {
+            return;
+        }
+        
+        // 停止所有音乐
+        this.stopAll();
+        this.currentMusic = name;
+        
+        // 播放指定音乐
+        let targetMusic = null;
+        switch(name) {
+            case 'music1':
+                targetMusic = this.music1;
+                break;
+            case 'music2':
+                targetMusic = this.music2;
+                break;
+            case 'music4':
+                targetMusic = this.music4;
+                break;
+            case 'music5':
+                targetMusic = this.music5;
+                break;
+        }
+        
+        if (targetMusic) {
+            targetMusic.currentTime = 0;
+            targetMusic.play().catch(e => {
+                console.log(name + ' play failed:', e);
+                this.currentMusic = null;
+            });
+        }
+    }
+};
+
+// 音乐播放状态
+let hasUserInteracted = false;
+let isReadyModalClosed = false;
+let musicPlayed = {
+    music1: false,
+    music2: false,
+    music4: false,
+    music5: false
+};
+let pendingMusic = null;
+
+// 处理"开始"按钮点击
+const startButton = document.getElementById('start-button');
+const readyModal = document.getElementById('ready-modal');
+const birthdayInput = document.getElementById('birthday-input');
+const errorMessage = document.getElementById('error-message');
+
+// 正确的生日（格式：YYYYMMDD）
+const CORRECT_BIRTHDAY = '20060403';
+
+startButton.addEventListener('click', function() {
+    const inputBirthday = birthdayInput.value.trim();
+    
+    // 验证生日
+    if (inputBirthday === CORRECT_BIRTHDAY) {
+        // 生日正确，关闭弹窗
+        readyModal.style.display = 'none';
+        isReadyModalClosed = true;
+        
+        // 显示2D背景和3D场景
+        document.getElementById('bg-container').style.opacity = '1';
+        document.getElementById('canvas-container').style.opacity = '1';
+        
+        // 播放music1
+        hasUserInteracted = true;
+        if (!musicPlayed.music1) {
+            musicPlayed.music1 = true;
+            music.play('music1');
+        }
+        
+        // 如果有待播放的音乐，延迟播放
+        if (pendingMusic) {
+            setTimeout(() => {
+                if (pendingMusic === 'music2' && !musicPlayed.music2) {
+                    musicPlayed.music2 = true;
+                    music.play('music2');
+                } else if (pendingMusic === 'music4' && !musicPlayed.music4) {
+                    musicPlayed.music4 = true;
+                    music.play('music4');
+                } else if (pendingMusic === 'music5' && !musicPlayed.music5) {
+                    musicPlayed.music5 = true;
+                    music.play('music5');
+                }
+                pendingMusic = null;
+            }, 2000); // 延迟2秒，让music1先播放一会儿
+        }
+    } else {
+        // 生日不正确，显示错误信息
+        errorMessage.style.display = 'block';
+        birthdayInput.style.borderColor = '#ff4444';
+        
+        // 3秒后重置错误状态
+        setTimeout(() => {
+            errorMessage.style.display = 'none';
+            birthdayInput.style.borderColor = '#667eea';
+        }, 3000);
+    }
+});
+
+// 输入框回车键提交
+birthdayInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        startButton.click();
+    }
+});
 
 const CONFIG = {
     birthdayPhoto: '',
@@ -2297,32 +2571,32 @@ let phase = 0;
 let animationTime = 0;
 let phaseStartTime = 0;
 
-function handleClick() {
-    if (phase === 0) {
-        phase = 1;
-        phaseStartTime = animationTime;
-        document.getElementById('click-hint').style.opacity = '0';
-    } else if (phase === 2) {
-        phase = 3;
-        phaseStartTime = animationTime;
-        document.getElementById('cut-hint').style.opacity = '0';
-    }
-}
-
-window.addEventListener('click', handleClick);
-
 const raycaster = new THREE.Raycaster();
 const mouse = new THREE.Vector2();
 
 window.addEventListener('click', (event) => {
-    if (phase === 2) {
-        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        
-        raycaster.setFromCamera(mouse, camera);
-        const intersects = raycaster.intersectObject(cake, true);
-        
-        if (intersects.length > 0) {
+    if (!isReadyModalClosed) {
+        return; // 如果弹窗还没关闭，不处理点击事件
+    }
+    
+    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    
+    raycaster.setFromCamera(mouse, camera);
+    
+    // 检查是否点击到礼盒（phase 0时）
+    if (phase === 0) {
+        const intersectsGift = raycaster.intersectObject(gift, true);
+        if (intersectsGift.length > 0) {
+            phase = 1;
+            phaseStartTime = animationTime;
+            document.getElementById('click-hint').style.opacity = '0';
+        }
+    }
+    // 检查是否点击到蛋糕（phase 2时）
+    else if (phase === 2) {
+        const intersectsCake = raycaster.intersectObject(cake, true);
+        if (intersectsCake.length > 0) {
             phase = 3;
             phaseStartTime = animationTime;
             document.getElementById('cut-hint').style.opacity = '0';
@@ -2332,6 +2606,12 @@ window.addEventListener('click', (event) => {
 
 function animate() {
     requestAnimationFrame(animate);
+    
+    // 在弹窗关闭之前不执行动画和渲染
+    if (!isReadyModalClosed) {
+        return;
+    }
+    
     animationTime += 0.016;
     
     updateCamera();
@@ -2378,6 +2658,17 @@ function animate() {
         gift.rotation.x = currentRotationX * 0.5;
     } else if (phase === 1) {
         const elapsed = animationTime - phaseStartTime;
+        
+        // 进入phase 1时播放music2.mp3
+        if (elapsed < 0.1 && !musicPlayed.music2) {
+            if (!hasUserInteracted) {
+                // 如果用户还没交互，先暂存待播放的音乐
+                pendingMusic = 'music2';
+            } else {
+                musicPlayed.music2 = true;
+                music.play('music2');
+            }
+        }
         
         if (elapsed < 2.0) {
             gift.rotation.y = currentRotationY;
@@ -2446,6 +2737,12 @@ function animate() {
         cake.rotation.y = currentRotationY + 0.5;
     } else if (phase === 3) {
         const elapsed = animationTime - phaseStartTime;
+        
+        // 点击切蛋糕后直接播放music4.mp3
+        if (elapsed < 0.1 && !musicPlayed.music4) {
+            musicPlayed.music4 = true;
+            music.play('music4');
+        }
         
         cake.rotation.y = currentRotationY + 0.5 + elapsed * 0.1;
         
@@ -2746,6 +3043,16 @@ function gameOver() {
             const bdayText = document.getElementById('birthday-text');
             bdayText.style.opacity = '1';
             bdayText.style.transform = 'translateX(-50%) translateY(-50%)';
+            // 播放最终音乐
+            if (!musicPlayed.music5) {
+                if (!hasUserInteracted) {
+                    // 如果用户还没交互，先暂存待播放的音乐
+                    pendingMusic = 'music5';
+                } else {
+                    musicPlayed.music5 = true;
+                    music.play('music5');
+                }
+            }
         }, 2000);
     } else {
         gameOverTitle.textContent = '游戏结束';
@@ -2811,6 +3118,12 @@ closeSnakeModalBtn.addEventListener('click', () => {
     const bdayText = document.getElementById('birthday-text');
     bdayText.style.opacity = '1';
     bdayText.style.transform = 'translateX(-50%) translateY(-50%)';
+    
+    // 关闭贪吃蛇游戏后，切换到music5（胜利音乐）
+    if (!musicPlayed.music5) {
+        musicPlayed.music5 = true;
+        music.play('music5');
+    }
 });
 
 // 移动端适配 - Three.js和触摸事件
@@ -2851,6 +3164,105 @@ closeSnakeModalBtn.addEventListener('click', () => {
     }
 })();
 
+</script>
+
+<!-- 水波波纹效果 -->
+<script>
+(function() {
+    const canvas = document.getElementById('ripple-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    let width, height;
+    let ripples = [];
+    
+    // 调整canvas大小
+    function resize() {
+        width = canvas.width = window.innerWidth;
+        height = canvas.height = window.innerHeight;
+    }
+    
+    resize();
+    window.addEventListener('resize', resize);
+    
+    // 波纹类
+    class Ripple {
+        constructor(x, y) {
+            this.x = x;
+            this.y = y;
+            this.radius = 0;
+            this.maxRadius = Math.max(width, height) * 0.5;
+            this.opacity = 0.5;
+            this.speed = 2;
+            this.life = 1;
+        }
+        
+        update() {
+            this.radius += this.speed;
+            this.opacity = this.life * 0.5;
+            this.life = 1 - (this.radius / this.maxRadius);
+        }
+        
+        draw() {
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255, 255, 255, ${this.opacity})`;
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // 第二层波纹
+            ctx.beginPath();
+            ctx.arc(this.x, this.y, this.radius * 0.7, 0, Math.PI * 2);
+            ctx.strokeStyle = `rgba(255, 215, 0, ${this.opacity * 0.6})`;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+        }
+        
+        isDead() {
+            return this.life <= 0;
+        }
+    }
+    
+    // 鼠标移动时创建波纹
+    let lastMousePos = { x: 0, y: 0 };
+    let rippleTimer = 0;
+    
+    document.addEventListener('mousemove', (e) => {
+        const dx = e.clientX - lastMousePos.x;
+        const dy = e.clientY - lastMousePos.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        
+        // 只有在鼠标移动一定距离后才创建波纹
+        if (distance > 30) {
+            ripples.push(new Ripple(e.clientX, e.clientY));
+            lastMousePos = { x: e.clientX, y: e.clientY };
+        }
+    });
+    
+    // 触摸事件支持
+    document.addEventListener('touchmove', (e) => {
+        const touch = e.touches[0];
+        ripples.push(new Ripple(touch.clientX, touch.clientY));
+    }, { passive: true });
+    
+    // 动画循环
+    function animate() {
+        ctx.clearRect(0, 0, width, height);
+        
+        // 更新和绘制波纹
+        for (let i = ripples.length - 1; i >= 0; i--) {
+            ripples[i].update();
+            ripples[i].draw();
+            
+            if (ripples[i].isDead()) {
+                ripples.splice(i, 1);
+            }
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+})();
 </script>
 </body>
 </html>
