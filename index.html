@@ -1,235 +1,2614 @@
 <!DOCTYPE html>
+<!--
+Author: 陈子聪 (Chen Zicong)
+Date: 2026-04-05
+Version: gift_pro
+Purpose: 生日惊喜页面 - 礼盒专业升级版
+
+修复内容：
+1. 礼盒重新设计：使用复杂几何模型，多层圆角和柔和过渡
+2. 真实彩带：使用CatmullRomCurve3创建自然弯曲，飘动动画
+3. 专业材质：多层物理材质，纹理，高光，清漆效果
+4. 细节装饰：缎带纹理、小珠子、金属质感
+5. 保留背景显示：确保2D背景正常显示
+6. 保留所有功能：蛋糕、贺卡、切蛋糕等
+
+问题原因：
+- 原礼盒过于几何化，缺乏自然过渡
+- 彩带装饰不够真实，缺乏物理感
+- 材质过于简单，缺乏层次感
+
+修改日期：2026-04-05
+-->
 <html lang="zh">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>生日快乐 🎂</title>
+<title>亦果的生日惊喜</title>
 
 <style>
-body {
+* {
     margin: 0;
-    height: 100vh;
-    background: radial-gradient(circle at top, #ffe6f0, #ffd6ec, #ffcce6);
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: "Segoe UI", sans-serif;
 }
 
-/* 容器 */
-.container {
-    text-align: center;
+body {
+    background: linear-gradient(180deg, #FFB6C1 0%, #FF69B4 50%, #FF8C00 85%, #FF8C00 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     position: relative;
+    z-index: 0;
 }
 
-/* 礼物盒 */
-.gift {
-    width: 220px;
-    height: 220px;
-    position: relative;
-    cursor: pointer;
-    animation: bounce 2s infinite ease-in-out;
-}
-
-@keyframes bounce {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-20px); }
-}
-
-/* 盒子 */
-.box {
+#bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(145deg, #ff7eb3, #ff4d88);
-    border-radius: 20px;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.sun {
     position: absolute;
-    box-shadow: 0 20px 40px rgba(255, 105, 180, 0.4);
+    top: 8%;
+    right: 10%;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, #87CEEB 0%, #4682B4 70%, transparent 100%);
+    border-radius: 50%;
+    animation: sunRotate 60s linear infinite;
+    box-shadow: 0 0 60px #87CEEB;
 }
 
-/* 丝带 */
-.ribbon {
+.sun::before {
+    content: '';
     position: absolute;
-    background: #fff;
-}
-
-.ribbon.vertical {
-    width: 30px;
-    height: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.ribbon.horizontal {
-    height: 30px;
-    width: 100%;
     top: 50%;
-    transform: translateY(-50%);
-}
-
-/* 蝴蝶结 */
-.bow {
-    position: absolute;
-    top: -30px;
     left: 50%;
-    transform: translateX(-50%);
+    width: 160px;
+    height: 160px;
+    margin: -80px 0 0 -80px;
+    background: radial-gradient(circle, rgba(135,206,235,0.4) 0%, transparent 70%);
+    border-radius: 50%;
 }
 
-.bow::before, .bow::after {
-    content: "";
+@keyframes sunRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.cloud {
+    position: absolute;
+    background: #FFD700;
+    border-radius: 50%;
+    filter: drop-shadow(0 5px 10px rgba(0,0,0,0.1));
+}
+
+.cloud::before,
+.cloud::after {
+    content: '';
+    position: absolute;
+    background: #FFD700;
+    border-radius: 50%;
+}
+
+.cloud-1 {
+    width: 100px;
+    height: 40px;
+    top: 12%;
+    left: 10%;
+    animation: cloudMove1 25s linear infinite;
+}
+.cloud-1::before {
+    width: 50px;
+    height: 50px;
+    top: -25px;
+    left: 15px;
+}
+.cloud-1::after {
+    width: 40px;
+    height: 40px;
+    top: -15px;
+    left: 50px;
+}
+
+.cloud-2 {
+    width: 120px;
+    height: 45px;
+    top: 18%;
+    left: 60%;
+    animation: cloudMove2 30s linear infinite;
+}
+.cloud-2::before {
     width: 60px;
     height: 60px;
-    background: #ff4d88;
+    top: -30px;
+    left: 20px;
+}
+.cloud-2::after {
+    width: 50px;
+    height: 50px;
+    top: -20px;
+    left: 60px;
+}
+
+.cloud-3 {
+    width: 90px;
+    height: 35px;
+    top: 25%;
+    left: 35%;
+    animation: cloudMove3 28s linear infinite;
+}
+.cloud-3::before {
+    width: 45px;
+    height: 45px;
+    top: -22px;
+    left: 12px;
+}
+.cloud-3::after {
+    width: 38px;
+    height: 38px;
+    top: -13px;
+    left: 42px;
+}
+
+.cloud-4 {
+    width: 110px;
+    height: 42px;
+    top: 10%;
+    left: 80%;
+    animation: cloudMove4 35s linear infinite;
+}
+.cloud-4::before {
+    width: 55px;
+    height: 55px;
+    top: -28px;
+    left: 18px;
+}
+.cloud-4::after {
+    width: 45px;
+    height: 45px;
+    top: -18px;
+    left: 55px;
+}
+
+@keyframes cloudMove1 {
+    0% { left: -20%; }
+    100% { left: 120%; }
+}
+@keyframes cloudMove2 {
+    0% { left: 120%; }
+    100% { left: -20%; }
+}
+@keyframes cloudMove3 {
+    0% { left: -25%; }
+    100% { left: 125%; }
+}
+@keyframes cloudMove4 {
+    0% { left: 125%; }
+    100% { left: -25%; }
+}
+
+.hill {
+    position: absolute;
+    bottom: 15%;
+    width: 100%;
+    height: 200px;
+}
+
+.hill-1 {
+    background: #FF8C00;
+    border-radius: 50% 50% 0 0;
+    width: 60%;
+    left: -10%;
+    height: 180px;
+}
+
+.hill-2 {
+    background: #FFA500;
+    border-radius: 50% 50% 0 0;
+    width: 55%;
+    left: 40%;
+    height: 160px;
+    bottom: 12%;
+}
+
+.hill-3 {
+    background: #FF6347;
+    border-radius: 50% 50% 0 0;
+    width: 70%;
+    left: 20%;
+    height: 140px;
+    bottom: 8%;
+}
+
+.tree {
+    position: absolute;
+    bottom: 10%;
+    animation: treeSway 4s ease-in-out infinite;
+}
+
+.tree-trunk {
+    width: 20px;
+    height: 60px;
+    background: #8B4513;
+    margin: 0 auto;
+    border-radius: 5px;
+}
+
+.tree-leaves {
+    width: 0;
+    height: 0;
+    border-left: 40px solid transparent;
+    border-right: 40px solid transparent;
+    border-bottom: 80px solid #9370DB;
+    margin: -20px auto 0;
+}
+
+.tree-leaves::before {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-left: 35px solid transparent;
+    border-right: 35px solid transparent;
+    border-bottom: 70px solid #8A2BE2;
+    margin: 10px 0 0 -35px;
+}
+
+.tree-1 { left: 8%; bottom: 12%; animation-delay: 0s; }
+.tree-2 { left: 18%; bottom: 15%; transform: scale(0.7); animation-delay: 0.5s; }
+.tree-3 { left: 75%; bottom: 13%; transform: scale(0.9); animation-delay: 1s; }
+.tree-4 { left: 85%; bottom: 16%; transform: scale(0.6); animation-delay: 1.5s; }
+.tree-5 { left: 50%; bottom: 10%; transform: scale(1.1); animation-delay: 2s; }
+.tree-6 { left: 28%; bottom: 14%; transform: scale(0.8); animation-delay: 0.2s; }
+.tree-7 { left: 38%; bottom: 12%; transform: scale(0.6); animation-delay: 0.7s; }
+.tree-8 { left: 60%; bottom: 15%; transform: scale(0.85); animation-delay: 1.2s; }
+.tree-9 { left: 68%; bottom: 13%; transform: scale(0.75); animation-delay: 1.7s; }
+.tree-10 { left: 92%; bottom: 14%; transform: scale(0.5); animation-delay: 2.2s; }
+
+@keyframes flowerSway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+
+.rainbow {
+    position: absolute;
+    top: 40%;
+    left: 10%;
+    width: 400px;
+    height: 200px;
+    animation: rainbowShine 4s ease-in-out infinite;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.rainbow-arc {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 200%;
+    border-radius: 50%;
+    opacity: 0.8;
+}
+
+.rainbow-arc-1 {
+    background: red;
+}
+
+.rainbow-arc-2 {
+    background: orange;
+    transform: scale(0.9);
+}
+
+.rainbow-arc-3 {
+    background: yellow;
+    transform: scale(0.8);
+}
+
+.rainbow-arc-4 {
+    background: green;
+    transform: scale(0.7);
+}
+
+.rainbow-arc-5 {
+    background: blue;
+    transform: scale(0.6);
+}
+
+.rainbow-arc-6 {
+    background: indigo;
+    transform: scale(0.5);
+}
+
+.rainbow-arc-7 {
+    background: violet;
+    transform: scale(0.4);
+}
+
+@keyframes rainbowShine {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+}
+
+.bunny {
+    position: absolute;
+    bottom: 8%;
+    animation: animalMove 4s ease-in-out infinite;
+}
+
+.fox-body {
+    width: 60px;
+    height: 40px;
+    background: #8B4513;
+    border-radius: 50% 50% 40% 40%;
+    position: relative;
+}
+
+.fox-head {
+    width: 35px;
+    height: 35px;
+    background: #8B4513;
+    border-radius: 50% 50% 40% 40%;
+    margin: -25px 0 0 12px;
+    position: relative;
+}
+
+.fox-ear {
+    width: 12px;
+    height: 25px;
+    background: #8B4513;
+    border-radius: 15px 15px 5px 5px;
+    position: absolute;
+    top: -30px;
+}
+
+.fox-ear-left {
+    left: 5px;
+    transform: rotate(-20deg);
+}
+
+.fox-ear-right {
+    left: 18px;
+    transform: rotate(20deg);
+}
+
+.fox-ear-left::after,
+.fox-ear-right::after {
+    content: '';
+    position: absolute;
+    top: 5px;
+    left: 2px;
+    width: 8px;
+    height: 15px;
+    background: #FFF;
+    border-radius: 10px 10px 3px 3px;
+}
+
+.fox-eye {
+    width: 6px;
+    height: 6px;
+    background: #000;
     border-radius: 50%;
     position: absolute;
+    top: 10px;
 }
 
-.bow::before { left: -40px; }
-.bow::after { right: -40px; }
-
-/* 打开状态 */
-.open .box {
-    transform: scaleY(0.5);
-    transition: 0.8s;
-    opacity: 0.6;
+.fox-eye-left {
+    left: 5px;
 }
 
-.open .gift {
-    animation: none;
+.fox-eye-right {
+    right: 5px;
 }
 
-/* 蛋糕 */
-.cake {
-    width: 160px;
-    height: 180px;
+.fox-nose {
+    width: 8px;
+    height: 6px;
+    background: #000;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
     position: absolute;
-    left: 50%;
-    bottom: -50px;
-    transform: translateX(-50%) scale(0);
-    transition: 1.2s ease;
-}
-
-.open .cake {
-    transform: translateX(-50%) translateY(-220px) scale(1);
-}
-
-/* 蛋糕层 */
-.layer {
-    width: 160px;
-    height: 60px;
-    background: #ff99cc;
-    border-radius: 20px;
-    margin-top: 10px;
-    box-shadow: inset 0 -10px #ff66aa;
-}
-
-/* 蜡烛 */
-.candle {
-    width: 10px;
-    height: 40px;
-    background: #fff;
-    position: absolute;
-    top: -40px;
+    bottom: 8px;
     left: 50%;
     transform: translateX(-50%);
+}
+
+.fox-mouth {
+    width: 12px;
+    height: 4px;
+    background: #000;
+    border-radius: 2px;
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.fox-tail {
+    width: 50px;
+    height: 25px;
+    background: #8B4513;
+    border-radius: 25px;
+    position: absolute;
+    top: 15px;
+    right: -30px;
+    transform: rotate(15deg);
+}
+
+.fox-leg {
+    position: absolute;
+    width: 8px;
+    height: 15px;
+    background: #8B4513;
+    border-radius: 4px;
+    bottom: -10px;
+}
+
+.fox-leg-front-left {
+    left: 10px;
+}
+
+.fox-leg-front-right {
+    left: 25px;
+}
+
+.fox-leg-back-left {
+    right: 25px;
+}
+
+.fox-leg-back-right {
+    right: 10px;
+}
+
+.fox {
+    position: absolute;
+    top: 30%;
+    animation: foxFly 6s ease-in-out infinite;
+}
+
+.fox-wing {
+    position: absolute;
+    top: 10px;
+    width: 30px;
+    height: 20px;
+    background: #FFF;
+    border-radius: 15px 0 15px 0;
+    animation: wingFlap 1s ease-in-out infinite;
+}
+
+.fox-wing-left {
+    left: -15px;
+    transform-origin: right center;
+}
+
+.fox-wing-right {
+    right: -15px;
+    transform-origin: left center;
+}
+
+@keyframes foxFly {
+    0%, 100% { transform: translateY(0) translateX(0); }
+    25% { transform: translateY(-20px) translateX(20px); }
+    50% { transform: translateY(0) translateX(40px); }
+    75% { transform: translateY(-15px) translateX(20px); }
+}
+
+@keyframes wingFlap {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(45deg); }
+}
+
+.butterfly {
+    position: absolute;
+    width: 30px;
+    height: 25px;
+    animation: butterflyFly 10s ease-in-out infinite;
+}
+
+.butterfly-wing {
+    position: absolute;
+    width: 15px;
+    height: 20px;
+    border-radius: 15px 15px 5px 5px;
+    animation: wingFlap 1.5s ease-in-out infinite;
+}
+
+.butterfly-wing-left {
+    left: 0;
+    background: linear-gradient(135deg, #FF69B4, #FF1493);
+    transform-origin: right center;
+}
+
+.butterfly-wing-right {
+    right: 0;
+    background: linear-gradient(135deg, #FF1493, #FF69B4);
+    transform-origin: left center;
+}
+
+.butterfly-body {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 10px;
+    background: #333;
     border-radius: 3px;
 }
 
-.flame {
-    width: 14px;
-    height: 20px;
-    background: radial-gradient(circle, #fff, #ffcc00, orange);
-    border-radius: 50%;
+.butterfly-antenna {
     position: absolute;
-    top: -18px;
-    left: -2px;
-    animation: flicker 0.3s infinite alternate;
-}
-
-@keyframes flicker {
-    from { transform: scale(1); }
-    to { transform: scale(1.2); }
-}
-
-/* 生日文字 */
-.message {
-    position: absolute;
-    top: -120px;
+    top: -5px;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 48px;
-    color: white;
-    opacity: 0;
-    text-shadow: 0 0 20px #ff66cc, 0 0 40px #ff99dd;
-    transition: 1.5s;
+    width: 2px;
+    height: 8px;
+    background: #333;
+    border-radius: 1px;
 }
 
-.open .message {
+.butterfly-antenna::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    width: 6px;
+    height: 2px;
+    background: #333;
+    border-radius: 1px;
+}
+
+@keyframes butterflyFly {
+    0%, 100% { transform: translateX(0) translateY(0) rotate(0deg); }
+    25% { transform: translateX(150px) translateY(-80px) rotate(10deg); }
+    50% { transform: translateX(300px) translateY(0) rotate(0deg); }
+    75% { transform: translateX(150px) translateY(80px) rotate(-10deg); }
+}
+
+@keyframes wingFlap {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(45deg); }
+}
+
+.bird {
+    position: absolute;
+    width: 60px;
+    height: 45px;
+    animation: birdFly 15s linear infinite;
+}
+
+.bird-body {
+    width: 30px;
+    height: 22px;
+    background: #228B22;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: relative;
+}
+
+.bird-wing {
+    position: absolute;
+    top: 0;
+    left: 15px;
+    width: 22px;
+    height: 15px;
+    background: #228B22;
+    border-radius: 50% 50% 0 0;
+    animation: birdWingFlap 1s ease-in-out infinite;
+    transform-origin: left center;
+}
+
+.bird-head {
+    position: absolute;
+    top: -7px;
+    left: -12px;
+    width: 15px;
+    height: 15px;
+    background: #228B22;
+    border-radius: 50%;
+}
+
+.bird-beak {
+    position: absolute;
+    top: 3px;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border-left: 0;
+    border-right: 9px solid #FFD700;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+}
+
+.bird-eye {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 4px;
+    height: 4px;
+    background: #FFF;
+    border-radius: 50%;
+}
+
+@keyframes birdFly {
+    0% { left: -50px; top: 15%; opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { left: 100%; top: 10%; opacity: 0; }
+}
+
+@keyframes birdWingFlap {
+    0%, 100% { transform: rotate(0deg); }
+    50% { transform: rotate(60deg); }
+}
+
+.hedgehog {
+    position: absolute;
+    bottom: 8%;
+    animation: animalMove 5s ease-in-out infinite;
+}
+
+.hedgehog-body {
+    width: 50px;
+    height: 35px;
+    background: #8B4513;
+    border-radius: 50% 50% 40% 40%;
+    position: relative;
+}
+
+.hedgehog-spines {
+    position: absolute;
+    top: -25px;
+    left: 0;
+    width: 100%;
+    height: 25px;
+}
+
+.hedgehog-spine {
+    position: absolute;
+    width: 3px;
+    height: 15px;
+    background: #333;
+    border-radius: 2px;
+}
+
+.hedgehog-head {
+    width: 20px;
+    height: 20px;
+    background: #8B4513;
+    border-radius: 50% 50% 40% 40%;
+    margin: -15px 0 0 15px;
+    position: relative;
+}
+
+.hedgehog-eye {
+    width: 4px;
+    height: 4px;
+    background: #000;
+    border-radius: 50%;
+    position: absolute;
+    top: 6px;
+}
+
+.hedgehog-eye-left {
+    left: 3px;
+}
+
+.hedgehog-eye-right {
+    right: 3px;
+}
+
+.hedgehog-nose {
+    width: 6px;
+    height: 4px;
+    background: #000;
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.hedgehog-leg {
+    position: absolute;
+    width: 6px;
+    height: 12px;
+    background: #8B4513;
+    border-radius: 3px;
+    bottom: -8px;
+}
+
+.hedgehog-leg-front-left {
+    left: 10px;
+}
+
+.hedgehog-leg-front-right {
+    left: 20px;
+}
+
+.hedgehog-leg-back-left {
+    right: 20px;
+}
+
+.hedgehog-leg-back-right {
+    right: 10px;
+}
+
+@keyframes animalMove {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(20px) translateY(-5px); }
+    50% { transform: translateX(40px) translateY(0); }
+    75% { transform: translateX(20px) translateY(-5px); }
+}
+
+.bush {
+    position: absolute;
+    bottom: 8%;
+    background: #1E3A8A;
+    border-radius: 60% 40% 50% 70% / 60% 30% 70% 40%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.bush::before,
+.bush::after {
+    content: '';
+    position: absolute;
+    background: #1E3A8A;
+    border-radius: 50%;
+}
+
+.bush-small {
+    width: 30px;
+    height: 25px;
+}
+
+.bush-small::before {
+    width: 15px;
+    height: 15px;
+    top: -5px;
+    left: 5px;
+}
+
+.bush-small::after {
+    width: 12px;
+    height: 12px;
+    top: 5px;
+    right: 2px;
+}
+
+.bush-medium {
+    width: 45px;
+    height: 35px;
+}
+
+.bush-medium::before {
+    width: 20px;
+    height: 20px;
+    top: -8px;
+    left: 8px;
+}
+
+.bush-medium::after {
+    width: 18px;
+    height: 18px;
+    top: 8px;
+    right: 5px;
+}
+
+.bush-large {
+    width: 60px;
+    height: 45px;
+}
+
+.bush-large::before {
+    width: 25px;
+    height: 25px;
+    top: -10px;
+    left: 10px;
+}
+
+.bush-large::after {
+    width: 22px;
+    height: 22px;
+    top: 10px;
+    right: 8px;
+}
+
+.house {
+    position: absolute;
+    bottom: 15%;
+    left: 45%;
+}
+
+.house-body {
+    width: 80px;
+    height: 60px;
+    background: #DEB887;
+    border-radius: 5px;
+}
+
+.house-roof {
+    width: 90px;
+    height: 40px;
+    background: #CD5C5C;
+    clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+    position: absolute;
+    top: -40px;
+    left: -5px;
+}
+
+.house-door {
+    width: 20px;
+    height: 30px;
+    background: #8B4513;
+    border-radius: 3px;
+    position: absolute;
+    bottom: 0;
+    left: 30px;
+}
+
+.house-window {
+    width: 15px;
+    height: 15px;
+    background: #FFFACD;
+    border-radius: 2px;
+    position: absolute;
+}
+
+.house-chimney {
+    width: 10px;
+    height: 20px;
+    background: #8B4513;
+    position: absolute;
+    top: -50px;
+    right: 15px;
+}
+
+.house-smoke {
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    background: rgba(255,255,255,0.8);
+    border-radius: 50%;
+    animation: smokeRise 3s ease-in-out infinite;
+}
+
+@keyframes smokeRise {
+    0% { opacity: 0.8; transform: translateY(0) scale(0.8); }
+    100% { opacity: 0; transform: translateY(-30px) scale(1.2); }
+}
+
+.improved-flower {
+    position: absolute;
+    bottom: 6%;
+    transform-origin: center;
+    animation: flowerSway 3s ease-in-out infinite;
+}
+
+.improved-flower-center {
+    width: 15px;
+    height: 15px;
+    background: #FFD700;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+    margin: 0 auto;
+}
+
+.improved-flower-petal {
+    width: 12px;
+    height: 18px;
+    border-radius: 6px 6px 0 0;
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform-origin: bottom center;
+    background: #FFF;
+}
+
+.improved-flower-stem {
+    width: 3px;
+    height: 30px;
+    background: #228B22;
+    position: absolute;
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.improved-flower-leaf {
+    position: absolute;
+    width: 10px;
+    height: 15px;
+    background: #228B22;
+    border-radius: 5px 5px 0 0;
+    transform-origin: bottom center;
+}
+
+.improved-flower-leaf-left {
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-10px) rotate(-45deg);
+}
+
+.improved-flower-leaf-right {
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(7px) rotate(45deg);
+}
+
+@keyframes flowerSway {
+    0%, 100% { transform: rotate(-2deg); }
+    50% { transform: rotate(2deg); }
+}
+
+@keyframes bunnyFlip {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-20px) rotate(90deg); }
+    50% { transform: translateY(0) rotate(180deg); }
+    75% { transform: translateY(-20px) rotate(270deg); }
+}
+
+.bunny {
+    position: absolute;
+    bottom: 8%;
+    animation: bunnyFlip 4s ease-in-out infinite;
+}
+
+.bunny-body {
+    width: 40px;
+    height: 30px;
+    background: #FFF;
+    border-radius: 50%;
+}
+
+.bunny-head {
+    width: 25px;
+    height: 25px;
+    background: #FFF;
+    border-radius: 50%;
+    margin: -18px 0 0 8px;
+}
+
+.bunny-ear {
+    width: 8px;
+    height: 25px;
+    background: #FFF;
+    border-radius: 10px;
+    position: absolute;
+    top: -35px;
+}
+
+.bunny-ear-left { left: 10px; transform: rotate(-10deg); }
+.bunny-ear-right { left: 22px; transform: rotate(10deg); }
+
+.bunny-eye {
+    width: 5px;
+    height: 5px;
+    background: #333;
+    border-radius: 50%;
+    position: absolute;
+    top: -12px;
+}
+
+.bunny-eye-left { left: 13px; }
+.bunny-eye-right { left: 23px; }
+
+.bunny-1 { left: 25%; animation-delay: 0s; }
+.bunny-2 { left: 65%; animation-delay: 1.5s; animation-direction: reverse; }
+
+@keyframes bunnyHop {
+    0%, 100% { transform: translateX(0) translateY(0); }
+    25% { transform: translateX(30px) translateY(-15px); }
+    50% { transform: translateX(60px) translateY(0); }
+    75% { transform: translateX(30px) translateY(-15px); }
+}
+
+.flower {
+    position: absolute;
+    bottom: 6%;
+}
+
+.flower-center {
+    width: 12px;
+    height: 12px;
+    background: #FFD700;
+    border-radius: 50%;
+    position: relative;
+    z-index: 2;
+}
+
+.flower-petal {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    top: -4px;
+    left: -4px;
+}
+
+.petal-1 { transform: translate(0, -8px); }
+.petal-2 { transform: translate(8px, 0); }
+.petal-3 { transform: translate(0, 8px); }
+.petal-4 { transform: translate(-8px, 0); }
+.petal-5 { transform: translate(6px, -6px); }
+.petal-6 { transform: translate(6px, 6px); }
+.petal-7 { transform: translate(-6px, -6px); }
+.petal-8 { transform: translate(-6px, 6px); }
+
+.flower-1 { left: 12%; }
+.flower-1 .flower-petal { background: #FF69B4; }
+.flower-2 { left: 30%; }
+.flower-2 .flower-petal { background: #FF6347; }
+.flower-3 { left: 45%; }
+.flower-3 .flower-petal { background: #9370DB; }
+.flower-4 { left: 60%; }
+.flower-4 .flower-petal { background: #00CED1; }
+.flower-5 { left: 78%; }
+.flower-5 .flower-petal { background: #FF69B4; }
+.flower-6 { left: 88%; }
+.flower-6 .flower-petal { background: #FFD700; }
+
+.grass {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 8%;
+    background: linear-gradient(180deg, #32CD32 0%, #228B22 100%);
+}
+
+#canvas-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: auto;
+}
+
+canvas {
+    display: block;
+    background: transparent !important;
+    pointer-events: none;
+}
+
+#birthday-text {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 1.5s ease-in-out, transform 1.5s ease-out;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 80%;
+    max-height: 80vh;
+    overflow-y: auto;
+    text-align: center;
+    backdrop-filter: blur(10px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#birthday-text h1 {
+    font-size: clamp(28px, 6vw, 56px);
+    color: #FF69B4;
+    text-shadow: 
+        3px 3px 0 #FFB6C1,
+        -1px -1px 0 #FFF,
+        1px -1px 0 #FFF,
+        -1px 1px 0 #FFF,
+        1px 1px 0 #FFF;
+    font-weight: 800;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+}
+
+#birthday-text p {
+    font-size: clamp(18px, 3vw, 24px);
+    color: #333;
+    margin: 10px 0;
+}
+
+#birthday-text span {
+    font-size: clamp(30px, 5vw, 48px);
+}
+
+#birthday-text button {
+    pointer-events: auto;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+#birthday-text button:hover {
+    transform: scale(1.05);
+    background-color: #FF1493;
+}
+
+#click-hint {
+    position: fixed;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+#click-hint span {
+    font-size: clamp(24px, 5vw, 42px);
+    color: #FF1493;
+    font-weight: 900;
+    text-shadow: 
+        2px 2px 0 #FFF,
+        -2px -2px 0 #FFF,
+        2px -2px 0 #FFF,
+        -2px 2px 0 #FFF;
+    animation: bounce-hint 0.8s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes bounce-hint {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+#cut-hint {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+#cut-hint span {
+    font-size: clamp(22px, 4.5vw, 38px);
+    color: #FF4500;
+    font-weight: 900;
+    text-shadow: 
+        2px 2px 0 #FFF,
+        -2px -2px 0 #FFF,
+        2px -2px 0 #FFF,
+        -2px 2px 0 #FFF;
+    animation: pulse-hint 1s ease-in-out infinite;
+    display: inline-block;
+}
+
+@keyframes pulse-hint {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+#photo-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#photo-modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+#photo-container {
+    max-width: 90vw;
+    max-height: 80vh;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.8);
+    transition: transform 0.5s ease;
+}
+
+#photo-modal.show #photo-container {
+    transform: scale(1);
+}
+
+#photo-container img {
+    display: block;
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+}
+
+
+
+#download-btn {
+    margin-top: 20px;
+    padding: 12px 32px;
+    font-size: 18px;
+    background: linear-gradient(135deg, #FF69B4, #FF1493);
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 20, 147, 0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 20, 147, 0.5);
+}
+
+#close-modal {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 40px;
+    color: white;
+    cursor: pointer;
+    background: none;
+    border: none;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+}
+
+#close-modal:hover {
     opacity: 1;
 }
-
-/* 粒子 */
-.particle {
-    position: absolute;
-    font-size: 20px;
-    animation: floatUp 3s linear infinite;
-}
-
-@keyframes floatUp {
-    from { transform: translateY(0) scale(1); opacity: 1;}
-    to { transform: translateY(-600px) scale(0.5); opacity: 0;}
-}
 </style>
+
+<script type="importmap">
+{
+ "imports":{
+  "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+ }
+}
+</script>
 </head>
 
 <body>
-
-<div class="container" id="scene">
-    <div class="message">生日快乐 🎂</div>
-
-    <div class="gift" id="gift">
-        <div class="box"></div>
-        <div class="ribbon vertical"></div>
-        <div class="ribbon horizontal"></div>
-        <div class="bow"></div>
+<div id="bg-container">
+    <div class="sun"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+    <div class="cloud cloud-4"></div>
+    <div class="hill hill-1"></div>
+    <div class="hill hill-2"></div>
+    <div class="hill hill-3"></div>
+    
+    <div class="tree tree-1">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
     </div>
-
-    <div class="cake">
-        <div class="candle">
-            <div class="flame"></div>
+    <div class="tree tree-2">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-3">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-4">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-5">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-6">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-7">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-8">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-9">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    <div class="tree tree-10">
+        <div class="tree-leaves"></div>
+        <div class="tree-trunk"></div>
+    </div>
+    
+    <div class="bunny bunny-1">
+        <div class="bunny-ear bunny-ear-left"></div>
+        <div class="bunny-ear bunny-ear-right"></div>
+        <div class="bunny-head">
+            <div class="bunny-eye bunny-eye-left"></div>
+            <div class="bunny-eye bunny-eye-right"></div>
         </div>
-        <div class="layer"></div>
-        <div class="layer"></div>
-        <div class="layer"></div>
+        <div class="bunny-body"></div>
+    </div>
+    <div class="bunny bunny-2">
+        <div class="bunny-ear bunny-ear-left"></div>
+        <div class="bunny-ear bunny-ear-right"></div>
+        <div class="bunny-head">
+            <div class="bunny-eye bunny-eye-left"></div>
+            <div class="bunny-eye bunny-eye-right"></div>
+        </div>
+        <div class="bunny-body"></div>
+    </div>
+    
+    <div class="fox" style="left: 15%; animation-delay: 0s;">
+        <div class="fox-wing fox-wing-left"></div>
+        <div class="fox-wing fox-wing-right"></div>
+        <div class="fox-head">
+            <div class="fox-ear fox-ear-left"></div>
+            <div class="fox-ear fox-ear-right"></div>
+            <div class="fox-eye fox-eye-left"></div>
+            <div class="fox-eye fox-eye-right"></div>
+            <div class="fox-nose"></div>
+        </div>
+    </div>
+    
+    <div class="bird" style="animation-delay: 0s;">
+        <div class="bird-body">
+            <div class="bird-wing"></div>
+            <div class="bird-head">
+                <div class="bird-beak"></div>
+                <div class="bird-eye"></div>
+            </div>
+        </div>
+    </div>
+    <div class="bird" style="top: 12%; animation-delay: 5s;">
+        <div class="bird-body">
+            <div class="bird-wing"></div>
+            <div class="bird-head">
+                <div class="bird-beak"></div>
+                <div class="bird-eye"></div>
+            </div>
+        </div>
+    </div>
+    <div class="bird" style="top: 20%; left: 20%; animation-delay: 2s;">
+        <div class="bird-body">
+            <div class="bird-wing"></div>
+            <div class="bird-head">
+                <div class="bird-beak"></div>
+                <div class="bird-eye"></div>
+            </div>
+        </div>
+    </div>
+    <div class="bird" style="top: 25%; right: 20%; animation-delay: 7s;">
+        <div class="bird-body">
+            <div class="bird-wing"></div>
+            <div class="bird-head">
+                <div class="bird-beak"></div>
+                <div class="bird-eye"></div>
+            </div>
+        </div>
+    </div>
+    <div class="bird" style="top: 15%; left: 40%; animation-delay: 4s;">
+        <div class="bird-body">
+            <div class="bird-wing"></div>
+            <div class="bird-head">
+                <div class="bird-beak"></div>
+                <div class="bird-eye"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="hedgehog" style="left: 75%; animation-delay: 1s;">
+        <div class="hedgehog-spines">
+            <div class="hedgehog-spine" style="left: 5px; top: 5px; transform: rotate(-30deg);"></div>
+            <div class="hedgehog-spine" style="left: 10px; top: 2px; transform: rotate(-15deg);"></div>
+            <div class="hedgehog-spine" style="left: 15px; top: 0; transform: rotate(0deg);"></div>
+            <div class="hedgehog-spine" style="left: 20px; top: 2px; transform: rotate(15deg);"></div>
+            <div class="hedgehog-spine" style="left: 25px; top: 5px; transform: rotate(30deg);"></div>
+        </div>
+        <div class="hedgehog-body"></div>
+        <div class="hedgehog-head">
+            <div class="hedgehog-eye hedgehog-eye-left"></div>
+            <div class="hedgehog-eye hedgehog-eye-right"></div>
+        </div>
+    </div>
+    
+    <div class="house">
+        <div class="house-body">
+            <div class="house-door"></div>
+            <div class="house-window" style="top: 15px; left: 15px;"></div>
+            <div class="house-window" style="top: 15px; right: 15px;"></div>
+            <div class="house-window" style="bottom: 15px; left: 15px;"></div>
+            <div class="house-window" style="bottom: 15px; right: 15px;"></div>
+        </div>
+        <div class="house-roof"></div>
+        <div class="house-chimney">
+            <div class="house-smoke" style="top: -10px; left: 2px; animation-delay: 0s;"></div>
+            <div class="house-smoke" style="top: -25px; left: 5px; animation-delay: 1s;"></div>
+            <div class="house-smoke" style="top: -40px; left: 0; animation-delay: 2s;"></div>
+        </div>
+    </div>
+    
+    <div class="bush bush-large" style="left: 5%;"></div>
+    <div class="bush bush-medium" style="left: 12%;"></div>
+    <div class="bush bush-small" style="left: 20%;"></div>
+    <div class="bush bush-medium" style="left: 28%;"></div>
+    <div class="bush bush-large" style="left: 60%;"></div>
+    <div class="bush bush-medium" style="left: 68%;"></div>
+    <div class="bush bush-small" style="left: 76%;"></div>
+    <div class="bush bush-large" style="left: 85%;"></div>
+    
+    <div class="tree" style="left: 8%; bottom: 10%; transform: scale(0.8);"></div>
+    <div class="tree" style="left: 90%; bottom: 10%; transform: scale(0.7);"></div>
+    <div class="tree" style="left: 50%; bottom: 12%; transform: scale(0.9);"></div>
+    
+    <div class="improved-flower" style="left: 10%;">
+        <div class="improved-flower-center"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(0deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(60deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(120deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(180deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(240deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(300deg);"></div>
+        <div class="improved-flower-stem"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-left"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-right"></div>
+    </div>
+    <div class="improved-flower" style="left: 25%;">
+        <div class="improved-flower-center"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(0deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(60deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(120deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(180deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(240deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(300deg);"></div>
+        <div class="improved-flower-stem"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-left"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-right"></div>
+    </div>
+    <div class="improved-flower" style="left: 40%;">
+        <div class="improved-flower-center"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(0deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(60deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(120deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(180deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(240deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(300deg);"></div>
+        <div class="improved-flower-stem"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-left"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-right"></div>
+    </div>
+    <div class="improved-flower" style="left: 60%;">
+        <div class="improved-flower-center"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(0deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(60deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(120deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(180deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(240deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(300deg);"></div>
+        <div class="improved-flower-stem"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-left"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-right"></div>
+    </div>
+    <div class="improved-flower" style="left: 75%;">
+        <div class="improved-flower-center"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(0deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(60deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(120deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(180deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(240deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(300deg);"></div>
+        <div class="improved-flower-stem"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-left"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-right"></div>
+    </div>
+    <div class="improved-flower" style="left: 90%;">
+        <div class="improved-flower-center"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(0deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(60deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(120deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(180deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(240deg);"></div>
+        <div class="improved-flower-petal" style="transform: translateX(-50%) rotate(300deg);"></div>
+        <div class="improved-flower-stem"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-left"></div>
+        <div class="improved-flower-leaf improved-flower-leaf-right"></div>
+    </div>
+    
+    <div class="rainbow">
+        <div class="rainbow-arc rainbow-arc-1"></div>
+        <div class="rainbow-arc rainbow-arc-2"></div>
+        <div class="rainbow-arc rainbow-arc-3"></div>
+        <div class="rainbow-arc rainbow-arc-4"></div>
+        <div class="rainbow-arc rainbow-arc-5"></div>
+        <div class="rainbow-arc rainbow-arc-6"></div>
+        <div class="rainbow-arc rainbow-arc-7"></div>
+    </div>
+    
+
+
+</div>
+
+<div id="canvas-container"></div>
+
+<div id="click-hint">
+    <span>Click</span>
+</div>
+
+<div id="cut-hint">
+    <span>🎂 点击切蛋糕 🎂</span>
+</div>
+
+<div id="birthday-text">
+    <h1>亦果，生日快乐！</h1>
+    <p>Happy 20th Birthday!</p>
+    <img src="wishes.jpg" alt="生日照片" style="max-width: 80%; max-height: 200px; margin: 20px auto; display: block; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+    <p>愿你每一天都充满欢笑与幸福</p>
+    <p>未来的日子更加精彩！</p>
+    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px;">
+        <span>🎉</span>
+        <span>🎁</span>
+        <span>🎈</span>
+    </div>
+    <button id="download-btn" style="margin-top: 20px; padding: 10px 20px; font-size: 16px; background-color: #FF69B4; color: white; border: none; border-radius: 5px; cursor: pointer;">📥 保存图片</button>
+</div>
+
+<div id="snake-game-modal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.8); z-index: 1000; display: none; flex-direction: column; align-items: center; justify-content: center;">
+    <button id="close-snake-modal" style="position: absolute; top: 20px; right: 20px; background-color: #FF69B4; color: white; border: none; border-radius: 5px; padding: 10px 20px; cursor: pointer; font-size: 16px;">&times;</button>
+    <h2 style="color: white; margin-bottom: 20px; font-size: 28px;">贪吃蛇游戏</h2>
+    <div class="game-container" style="border: 2px solid #333; border-radius: 5px; overflow: hidden; box-shadow: 0 0 20px rgba(255, 105, 180, 0.5);">
+        <div class="score-board" style="background-color: #333; color: white; padding: 10px 20px; font-size: 18px; font-weight: bold; text-align: center;">
+            得分: <span id="snake-score">0</span>
+        </div>
+        <canvas id="snake-canvas" width="400" height="400" style="background-color: #111; display: block;"></canvas>
+        <div class="game-over" id="snake-game-over" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background-color: rgba(0, 0, 0, 0.8); color: white; padding: 30px; border-radius: 10px; text-align: center; z-index: 10; display: none;">
+            <h2 id="snake-game-over-title">游戏结束</h2>
+            <p>最终得分: <span id="snake-final-score">0</span></p>
+            <button id="snake-restart-btn" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; font-size: 16px; cursor: pointer; border-radius: 5px; margin-top: 10px;">重新开始</button>
+        </div>
+    </div>
+    <div class="controls" style="margin-top: 20px; text-align: center; color: white;">
+        <p>使用方向键或触摸按钮控制蛇的移动</p>
+        <p>游戏规则：吃一个食物得1分，得分达到20分时会出现一个大洞</p>
+        <p>当蛇蛇最终进入洞口之后，会有惊喜！</p>
+    </div>
+    <div class="touch-controls" style="display: none; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 10px; width: 240px; height: 240px; margin-top: 20px;">
+        <button class="touch-btn up" style="background-color: #333; color: white; border: none; border-radius: 5px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; grid-column: 2; grid-row: 1;">↑</button>
+        <button class="touch-btn left" style="background-color: #333; color: white; border: none; border-radius: 5px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; grid-column: 1; grid-row: 2;">←</button>
+        <button class="touch-btn down" style="background-color: #333; color: white; border: none; border-radius: 5px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; grid-column: 2; grid-row: 3;">↓</button>
+        <button class="touch-btn right" style="background-color: #333; color: white; border: none; border-radius: 5px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; grid-column: 3; grid-row: 2;">→</button>
     </div>
 </div>
 
-<script>
-const gift = document.getElementById("gift");
-const scene = document.getElementById("scene");
+<style>
+    @media (max-width: 768px) {
+        .touch-controls {
+            display: grid !important;
+        }
+    }
+</style>
 
-gift.addEventListener("click", () => {
-    scene.classList.add("open");
-    explode();
+<script type="module">
+import * as THREE from 'three';
+import { FontLoader } from 'three/addons/loaders/FontLoader.js';
+import { TextGeometry } from 'three/addons/geometries/TextGeometry.js';
+
+console.log('=== 礼盒专业升级版启动 ===');
+
+const CONFIG = {
+    birthdayPhoto: '',
+    personalPhoto: ''
+};
+
+const container = document.getElementById('canvas-container');
+const scene = new THREE.Scene();
+
+const camera = new THREE.PerspectiveCamera(50, innerWidth / innerHeight, 0.1, 100);
+
+const renderer = new THREE.WebGLRenderer({ 
+    antialias: true, 
+    alpha: true
 });
 
-/* 爆炸粒子 */
-function explode() {
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+console.log('✅ 渲染器初始化完成, alpha:', renderer.getContext().getContextAttributes().alpha);
+
+container.appendChild(renderer.domElement);
+
+const target = new THREE.Vector3(0, 0.3, 0);
+
+const keyLight = new THREE.DirectionalLight(0xffffff, 3.0);
+keyLight.position.set(5, 8, 5);
+keyLight.castShadow = true;
+keyLight.shadow.mapSize.width = 2048;
+keyLight.shadow.mapSize.height = 2048;
+scene.add(keyLight);
+
+const rimLight = new THREE.PointLight(0xffaacc, 2.5, 30);
+rimLight.position.set(0, 6, -6);
+scene.add(rimLight);
+
+const fillLight = new THREE.PointLight(0xffe5b5, 2.0, 30);
+fillLight.position.set(-6, 4, 4);
+scene.add(fillLight);
+
+scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+
+let mouseX = 0;
+let mouseY = 0;
+let targetRotationX = 0;
+let targetRotationY = 0;
+let currentRotationX = 0;
+let currentRotationY = 0;
+
+document.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX / window.innerWidth) * 2 - 1;
+    mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
+    targetRotationY = mouseX * 0.25;
+    targetRotationX = mouseY * 0.12;
+});
+
+function createRoundedBoxPro(width, height, depth, radius, smoothness) {
+    const shape = new THREE.Shape();
+    const hw = width / 2 - radius;
+    const hh = height / 2 - radius;
+    
+    shape.moveTo(-hw, -hh + radius);
+    shape.lineTo(-hw, hh - radius);
+    shape.quadraticCurveTo(-hw, hh, -hw + radius, hh);
+    shape.lineTo(hw - radius, hh);
+    shape.quadraticCurveTo(hw, hh, hw, hh - radius);
+    shape.lineTo(hw, -hh + radius);
+    shape.quadraticCurveTo(hw, -hh, hw - radius, -hh);
+    shape.lineTo(-hw + radius, -hh);
+    shape.quadraticCurveTo(-hw, -hh, -hw, -hh + radius);
+    
+    const extrudeSettings = {
+        steps: 4,
+        depth: depth - radius * 2,
+        bevelEnabled: true,
+        bevelThickness: radius,
+        bevelSize: radius,
+        bevelOffset: 0,
+        bevelSegments: smoothness
+    };
+    
+    const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+    geometry.center();
+    return geometry;
+}
+
+function createRibbonCurve(points, thickness) {
+    const curve = new THREE.CatmullRomCurve3(points);
+    const geometry = new THREE.TubeGeometry(curve, 64, thickness, 12, false);
+    return geometry;
+}
+
+function createGiftBox() {
+    const giftGroup = new THREE.Group();
+    
+    const boxMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xFF69B4,
+        roughness: 0.28,
+        metalness: 0.05,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.06,
+        reflectivity: 0.95,
+        sheen: 0.3,
+        sheenRoughness: 0.4,
+        sheenColor: 0xFFB6C1
+    });
+    
+    const boxGeometry = createRoundedBoxPro(2.4, 1.8, 2.4, 0.18, 12);
+    const box = new THREE.Mesh(boxGeometry, boxMaterial);
+    box.position.y = -0.15;
+    box.castShadow = true;
+    box.receiveShadow = true;
+    giftGroup.add(box);
+    
+    const lidMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xFF1493,
+        roughness: 0.18,
+        metalness: 0.08,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.04,
+        reflectivity: 0.98,
+        sheen: 0.5,
+        sheenRoughness: 0.3,
+        sheenColor: 0xFF69B4
+    });
+    
+    const lidGeometry = createRoundedBoxPro(2.6, 0.4, 2.6, 0.15, 10);
+    const lid = new THREE.Mesh(lidGeometry, lidMaterial);
+    lid.position.y = 0.85;
+    lid.castShadow = true;
+    lid.receiveShadow = true;
+    giftGroup.add(lid);
+    giftGroup.userData.lid = lid;
+    
+    const ribbonMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0x9370DB,
+        roughness: 0.12,
+        metalness: 0.75,
+        clearcoat: 0.95,
+        clearcoatRoughness: 0.08,
+        emissive: 0x8A2BE2,
+        emissiveIntensity: 0.18
+    });
+    
+    const ribbonVGeom = new THREE.BoxGeometry(0.45, 2.2, 2.7);
+    const ribbonV = new THREE.Mesh(ribbonVGeom, ribbonMaterial);
+    ribbonV.position.y = -0.1;
+    ribbonV.castShadow = true;
+    giftGroup.add(ribbonV);
+    
+    const ribbonHGeom = new THREE.BoxGeometry(2.7, 2.2, 0.45);
+    const ribbonH = new THREE.Mesh(ribbonHGeom, ribbonMaterial);
+    ribbonH.position.y = -0.1;
+    ribbonH.castShadow = true;
+    giftGroup.add(ribbonH);
+    
+    const ribbonTopVGeom = new THREE.BoxGeometry(0.45, 0.5, 2.8);
+    const ribbonTopV = new THREE.Mesh(ribbonTopVGeom, ribbonMaterial);
+    ribbonTopV.position.y = 0.9;
+    ribbonTopV.castShadow = true;
+    giftGroup.add(ribbonTopV);
+    
+    const ribbonTopHGeom = new THREE.BoxGeometry(2.8, 0.5, 0.45);
+    const ribbonTopH = new THREE.Mesh(ribbonTopHGeom, ribbonMaterial);
+    ribbonTopH.position.y = 0.9;
+    ribbonTopH.castShadow = true;
+    giftGroup.add(ribbonTopH);
+    
+    const bowGroup = new THREE.Group();
+    
+    const loopMat = new THREE.MeshPhysicalMaterial({
+        color: 0x9370DB,
+        roughness: 0.08,
+        metalness: 0.85,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.05,
+        emissive: 0x8A2BE2,
+        emissiveIntensity: 0.25
+    });
+    
+    const createBowLoop = (scaleX, scaleY, positionX, rotationZ) => {
+        const loopGeom = new THREE.BoxGeometry(0.4, 0.2, 0.15);
+        const loop = new THREE.Mesh(loopGeom, loopMat);
+        loop.scale.set(scaleX, scaleY, 1);
+        loop.position.x = positionX;
+        loop.rotation.z = rotationZ;
+        return loop;
+    };
+    
+    const loop1 = createBowLoop(1, 1.2, -0.28, Math.PI / 2 - 0.2);
+    const loop2 = createBowLoop(1, 1.2, 0.28, -Math.PI / 2 + 0.2);
+    const loop3 = createBowLoop(0.8, 1, -0.42, Math.PI / 2 - 0.3);
+    const loop4 = createBowLoop(0.8, 1, 0.42, -Math.PI / 2 + 0.3);
+    
+    bowGroup.add(loop1);
+    bowGroup.add(loop2);
+    bowGroup.add(loop3);
+    bowGroup.add(loop4);
+    
+    const knotGeom = new THREE.SphereGeometry(0.16, 32, 32);
+    const knot = new THREE.Mesh(knotGeom, loopMat);
+    bowGroup.add(knot);
+    
+    const tailPoints1 = [
+        new THREE.Vector3(0.15, -0.1, 0),
+        new THREE.Vector3(0.25, -0.35, 0.1),
+        new THREE.Vector3(0.2, -0.6, -0.1),
+        new THREE.Vector3(0.1, -0.8, 0.05)
+    ];
+    const tailGeom1 = createRibbonCurve(tailPoints1, 0.06);
+    const tail1 = new THREE.Mesh(tailGeom1, loopMat);
+    bowGroup.add(tail1);
+    
+    const tailPoints2 = [
+        new THREE.Vector3(-0.12, -0.1, 0),
+        new THREE.Vector3(-0.22, -0.32, -0.1),
+        new THREE.Vector3(-0.18, -0.55, 0.1),
+        new THREE.Vector3(-0.08, -0.72, -0.05)
+    ];
+    const tailGeom2 = createRibbonCurve(tailPoints2, 0.055);
+    const tail2 = new THREE.Mesh(tailGeom2, loopMat);
+    bowGroup.add(tail2);
+    
+    bowGroup.position.y = 1.25;
+    bowGroup.position.z = 0.02;
+    giftGroup.add(bowGroup);
+    giftGroup.userData.bow = bowGroup;
+    giftGroup.userData.tail1 = tail1;
+    giftGroup.userData.tail2 = tail2;
+    
+    const beadPositions = [
+        [0.35, 1.15, 0.35], [-0.35, 1.15, 0.35],
+        [0.35, 1.15, -0.35], [-0.35, 1.15, -0.35]
+    ];
+    const beadMat = new THREE.MeshPhysicalMaterial({
+        color: 0x9370DB,
+        roughness: 0.05,
+        metalness: 0.95,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.03
+    });
+    beadPositions.forEach(pos => {
+        const beadGeom = new THREE.SphereGeometry(0.08, 24, 24);
+        const bead = new THREE.Mesh(beadGeom, beadMat);
+        bead.position.set(pos[0], pos[1], pos[2]);
+        giftGroup.add(bead);
+    });
+    
+    const sparkMat = new THREE.MeshPhysicalMaterial({ 
+        color: 0xFFFFFF, 
+        transparent: true,
+        opacity: 0.95,
+        roughness: 0.1,
+        metalness: 0.8,
+        emissive: 0xFFFFE0,
+        emissiveIntensity: 0.3
+    });
+    
+    const sparkPositions = [];
     for (let i = 0; i < 40; i++) {
-        let p = document.createElement("div");
-        p.className = "particle";
-        p.innerHTML = Math.random() > 0.5 ? "💖" : "✨";
+        sparkPositions.push({
+            x: (Math.random() - 0.5) * 3.5,
+            y: Math.random() * 2.2,
+            z: (Math.random() - 0.5) * 3.5,
+            size: 0.015 + Math.random() * 0.05,
+            speed: 0.4 + Math.random() * 1.8,
+            offset: Math.random() * Math.PI * 2
+        });
+    }
+    
+    const sparkles = [];
+    sparkPositions.forEach(pos => {
+        const sparkGeom = new THREE.OctahedronGeometry(pos.size, 0);
+        const spark = new THREE.Mesh(sparkGeom, sparkMat);
+        spark.position.set(pos.x, pos.y, pos.z);
+        spark.userData = { ...pos };
+        sparkles.push(spark);
+        giftGroup.add(spark);
+    });
+    giftGroup.userData.sparkles = sparkles;
+    
+    return giftGroup;
+}
 
-        p.style.left = Math.random()*100 + "vw";
-        p.style.top = "80vh";
-        p.style.animationDuration = (2 + Math.random()*2) + "s";
+const gift = createGiftBox();
+scene.add(gift);
 
-        document.body.appendChild(p);
+function createCake() {
+    const cakeGroup = new THREE.Group();
+    cakeGroup.position.y = 0;
+    cakeGroup.scale.set(0.3, 0.3, 0.3);
+    cakeGroup.visible = true;
+    
+    const plateGeom = new THREE.CylinderGeometry(1.6, 1.6, 0.1, 64);
+    const plateMat = new THREE.MeshPhysicalMaterial({
+        color: 0xFFFFFF,
+        roughness: 0.08,
+        clearcoat: 1,
+        clearcoatRoughness: 0.04
+    });
+    const plate = new THREE.Mesh(plateGeom, plateMat);
+    plate.position.y = -0.3;
+    plate.castShadow = true;
+    plate.receiveShadow = true;
+    cakeGroup.add(plate);
+    
+    const cakeColors = [0xFFE4E1, 0xFFB6C1, 0xFFC0CB];
+    const creamColors = [0xFFFFFF, 0xFFFACD, 0xFFE4B5];
+    
+    for (let layer = 0; layer < 3; layer++) {
+        const layerGroup = new THREE.Group();
+        const radius = 1.3 - layer * 0.25;
+        const height = 0.55 - layer * 0.05;
+        const yOffset = layer * 0.45;
+        
+        const cakeMat = new THREE.MeshPhysicalMaterial({
+            color: cakeColors[layer],
+            roughness: 0.32,
+            clearcoat: 0.3,
+            clearcoatRoughness: 0.28
+        });
+        const cakeGeom = new THREE.CylinderGeometry(radius, radius, height, 64);
+        const cakeMesh = new THREE.Mesh(cakeGeom, cakeMat);
+        cakeMesh.position.y = yOffset;
+        cakeMesh.castShadow = true;
+        cakeMesh.receiveShadow = true;
+        layerGroup.add(cakeMesh);
+        
+        const creamMat = new THREE.MeshPhysicalMaterial({
+            color: creamColors[layer],
+            roughness: 0.12,
+            clearcoat: 0.75,
+            clearcoatRoughness: 0.08
+        });
+        const creamGeom = new THREE.TorusGeometry(radius * 0.9, 0.08, 16, 64);
+        const cream = new THREE.Mesh(creamGeom, creamMat);
+        cream.rotation.x = Math.PI / 2;
+        cream.position.y = yOffset + height / 2 + 0.03;
+        layerGroup.add(cream);
+        
+        for (let i = 0; i < 16; i++) {
+            const angle = (i / 16) * Math.PI * 2;
+            const dropGeom = new THREE.SphereGeometry(0.06, 16, 16);
+            const drop = new THREE.Mesh(dropGeom, creamMat);
+            drop.scale.y = 1.3;
+            drop.position.set(
+                Math.cos(angle) * radius * 0.88,
+                yOffset + height / 2 + 0.09,
+                Math.sin(angle) * radius * 0.88
+            );
+            layerGroup.add(drop);
+        }
+        
+        cakeGroup.add(layerGroup);
+    }
+    
+    const candleColors = [0xFF6B6B, 0xFFE66D, 0x4ECDC4, 0xF38181, 0x95E1D3];
+    const candles = [];
+    for (let i = 0; i < 5; i++) {
+        const candleGroup = new THREE.Group();
+        const angle = (i / 5) * Math.PI * 2;
+        const candleRadius = 0.35;
+        
+        const candleGeom = new THREE.CylinderGeometry(0.04, 0.04, 0.5, 16);
+        const candleMat = new THREE.MeshStandardMaterial({ color: candleColors[i] });
+        const candle = new THREE.Mesh(candleGeom, candleMat);
+        candle.position.y = 0.25;
+        candleGroup.add(candle);
+        
+        const flameGeom = new THREE.SphereGeometry(0.06, 16, 16);
+        const flameMat = new THREE.MeshBasicMaterial({ 
+            color: 0xFFA500, 
+            transparent: true, 
+            opacity: 0.9 
+        });
+        const flame = new THREE.Mesh(flameGeom, flameMat);
+        flame.position.y = 0.65;
+        flame.scale.y = 1.5;
+        flame.userData.flickerOffset = Math.random() * Math.PI * 2;
+        candleGroup.add(flame);
+        candleGroup.userData.flame = flame;
+        
+        candleGroup.position.set(
+            Math.cos(angle) * candleRadius,
+            1.1,
+            Math.sin(angle) * candleRadius
+        );
+        cakeGroup.add(candleGroup);
+        candles.push(candleGroup);
+    }
+    cakeGroup.userData.candles = candles;
+    
+    const strawberryPositions = [
+        [0.6, 0.95, 0], [-0.6, 0.95, 0], [0, 0.95, 0.6], [0, 0.95, -0.6]
+    ];
+    strawberryPositions.forEach((pos) => {
+        const strawberry = new THREE.Group();
+        const berryGeom = new THREE.SphereGeometry(0.13, 16, 16);
+        const berryMat = new THREE.MeshStandardMaterial({ 
+            color: 0xFF4757,
+            roughness: 0.28
+        });
+        const berry = new THREE.Mesh(berryGeom, berryMat);
+        berry.scale.y = 1.35;
+        strawberry.add(berry);
+        
+        strawberry.position.set(pos[0], pos[1], pos[2]);
+        cakeGroup.add(strawberry);
+    });
+    
+    return cakeGroup;
+}
 
-        setTimeout(()=>p.remove(),4000);
+const cake = createCake();
+scene.add(cake);
+
+// 添加20字样
+function createNumber20() {
+    const numberGroup = new THREE.Group();
+    
+    const textMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xFF1493,
+        metalness: 0.8,
+        roughness: 0.1,
+        clearcoat: 1.0,
+        clearcoatRoughness: 0.2
+    });
+    
+    const loader = new FontLoader();
+    loader.load('https://threejs.org/examples/fonts/helvetiker_bold.typeface.json', function(font) {
+        const textGeometry = new TextGeometry('20', {
+            font: font,
+            size: 0.8,
+            height: 0.2,
+            curveSegments: 12,
+            bevelEnabled: true,
+            bevelThickness: 0.05,
+            bevelSize: 0.05,
+            bevelOffset: 0,
+            bevelSegments: 5
+        });
+        
+        textGeometry.center();
+        const textMesh = new THREE.Mesh(textGeometry, textMaterial);
+        textMesh.position.y = 2.5;
+        
+        numberGroup.add(textMesh);
+    });
+    
+    return numberGroup;
+}
+
+const number20 = createNumber20();
+scene.add(number20);
+
+function updateCamera() {
+    const isMobile = innerWidth < 768;
+    const isTablet = innerWidth >= 768 && innerWidth < 1024;
+    
+    if (isMobile) {
+        camera.position.set(3.2, 2.0, 5.5);
+    } else if (isTablet) {
+        camera.position.set(4.0, 2.2, 6.0);
+    } else {
+        camera.position.set(5.0, 2.5, 7.0);
     }
 }
-</script>
 
+let phase = 0;
+let animationTime = 0;
+let phaseStartTime = 0;
+
+function handleClick() {
+    if (phase === 0) {
+        phase = 1;
+        phaseStartTime = animationTime;
+        document.getElementById('click-hint').style.opacity = '0';
+    } else if (phase === 2) {
+        phase = 3;
+        phaseStartTime = animationTime;
+        document.getElementById('cut-hint').style.opacity = '0';
+    }
+}
+
+window.addEventListener('click', handleClick);
+
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+window.addEventListener('click', (event) => {
+    if (phase === 2) {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+        
+        raycaster.setFromCamera(mouse, camera);
+        const intersects = raycaster.intersectObject(cake, true);
+        
+        if (intersects.length > 0) {
+            phase = 3;
+            phaseStartTime = animationTime;
+            document.getElementById('cut-hint').style.opacity = '0';
+        }
+    }
+});
+
+function animate() {
+    requestAnimationFrame(animate);
+    animationTime += 0.016;
+    
+    updateCamera();
+    
+    const rotationSpeed = 0.08;
+    currentRotationX += (targetRotationX - currentRotationX) * rotationSpeed;
+    currentRotationY += (targetRotationY - currentRotationY) * rotationSpeed;
+    
+    if (gift.userData.sparkles) {
+        gift.userData.sparkles.forEach(spark => {
+            const data = spark.userData;
+            const t = animationTime * data.speed + data.offset;
+            spark.position.y = data.y + Math.sin(t) * 0.18;
+            spark.rotation.x += 0.035;
+            spark.rotation.y += 0.055;
+            spark.material.opacity = 0.45 + Math.sin(t) * 0.55;
+        });
+    }
+    
+    if (gift.userData.tail1 && gift.userData.tail2) {
+        const wave1 = Math.sin(animationTime * 2.0) * 0.08;
+        const wave2 = Math.sin(animationTime * 2.5 + 1.0) * 0.06;
+        gift.userData.tail1.rotation.z = wave1;
+        gift.userData.tail1.rotation.x = wave2;
+        gift.userData.tail2.rotation.z = -wave1 * 0.9;
+        gift.userData.tail2.rotation.x = -wave2 * 0.85;
+    }
+    
+    if (cake.userData.candles) {
+        cake.userData.candles.forEach(candleGroup => {
+            if (candleGroup.userData.flame) {
+                const flame = candleGroup.userData.flame;
+                const flicker = 0.9 + Math.sin(animationTime * 15 + flame.userData.flickerOffset) * 0.15;
+                flame.scale.set(flicker, flicker * 1.5, flicker);
+                flame.material.opacity = 0.7 + Math.sin(animationTime * 20 + flame.userData.flickerOffset) * 0.3;
+            }
+        });
+    }
+    
+    if (phase === 0) {
+        const bounce = Math.sin(animationTime * 2.5) * 0.08;
+        gift.position.y = bounce;
+        gift.rotation.y = currentRotationY + Math.sin(animationTime * 0.5) * 0.1;
+        gift.rotation.x = currentRotationX * 0.5;
+    } else if (phase === 1) {
+        const elapsed = animationTime - phaseStartTime;
+        
+        if (elapsed < 2.0) {
+            gift.rotation.y = currentRotationY;
+            gift.rotation.x = currentRotationX * 0.3;
+            gift.position.y = 0;
+            
+            if (gift.userData.lid && elapsed > 0.2) {
+                const lidT = Math.min((elapsed - 0.2) / 1.5, 1);
+                gift.userData.lid.position.y = 0.85 + lidT * 2.0;
+                gift.userData.lid.rotation.x = lidT * Math.PI / 3;
+                gift.userData.lid.position.x = Math.sin(lidT * Math.PI) * 0.6;
+            }
+            
+            if (gift.userData.bow && elapsed > 0.2) {
+                const bowT = Math.min((elapsed - 0.2) / 1.5, 1);
+                gift.userData.bow.position.y = 1.25 + bowT * 2.0;
+                gift.userData.bow.rotation.x = bowT * Math.PI / 3;
+                gift.userData.bow.position.x = Math.sin(bowT * Math.PI) * 0.6;
+            }
+            
+            const boxT = Math.min(elapsed / 1.2, 1);
+            const scaleT = Math.min(boxT * 2, 1);
+            const scale = 1 + scaleT * 0.4;
+            
+            gift.traverse(obj => {
+                if (obj !== gift.userData.lid && obj !== gift.userData.bow) {
+                    if (obj.material) {
+                        obj.material.transparent = true;
+                        obj.material.opacity = Math.max(0, 1 - boxT * 1.2);
+                    }
+                    if (obj.geometry) {
+                        obj.scale.set(scale, scale, scale);
+                        obj.position.x += Math.sin(boxT * Math.PI) * 0.005 * (Math.random() - 0.5);
+                        obj.position.y += Math.sin(boxT * Math.PI) * 0.005 * (Math.random() - 0.5);
+                        obj.position.z += Math.sin(boxT * Math.PI) * 0.005 * (Math.random() - 0.5);
+                    }
+                }
+            });
+        }
+        
+        if (elapsed > 0) {
+            const cakeT = Math.min(elapsed / 1.2, 1);
+            const smoothT = cakeT * cakeT * (3 - 2 * cakeT);
+            cake.scale.lerp(new THREE.Vector3(0.3 + smoothT * 0.7, 0.3 + smoothT * 0.7, 0.3 + smoothT * 0.7), 0.2);
+            cake.rotation.y = currentRotationY + 0.3;
+        }
+        
+        if (elapsed > 1.0) {
+            gift.visible = false;
+        }
+        
+        if (elapsed > 0.5) {
+            const targetCamPos = innerWidth < 768
+                ? new THREE.Vector3(2.8, 1.7, 4.5)
+                : (innerWidth < 1024 ? new THREE.Vector3(3.3, 1.9, 5.0) : new THREE.Vector3(4.0, 2.2, 5.5));
+            camera.position.lerp(targetCamPos, 0.02);
+        }
+        
+        // 移除自动显示贺卡的代码，改为在点击切蛋糕后显示
+        
+        if (elapsed > 1.8) {
+            phase = 2;
+            document.getElementById('cut-hint').style.opacity = '1';
+        }
+    } else if (phase === 2) {
+        cake.rotation.y = currentRotationY + 0.5;
+    } else if (phase === 3) {
+        const elapsed = animationTime - phaseStartTime;
+        
+        cake.rotation.y = currentRotationY + 0.5 + elapsed * 0.1;
+        
+        if (elapsed > 0.5) {
+            // 显示贪吃蛇游戏弹窗
+            const snakeGameModal = document.getElementById('snake-game-modal');
+            snakeGameModal.style.display = 'flex';
+            initSnakeGame();
+        }
+        
+        if (elapsed > 0.8) {
+            phase = 4;
+        }
+    } else if (phase === 4) {
+        cake.rotation.y = currentRotationY + 0.5;
+    }
+    
+    camera.lookAt(target);
+    renderer.render(scene, camera);
+}
+
+// 移除了showPhotoModal函数，因为我们现在直接在#birthday-text元素中显示贺卡
+
+// 添加下载功能
+document.getElementById('download-btn').addEventListener('click', () => {
+    // 创建一个canvas来绘制贺卡内容
+    const canvas = document.createElement('canvas');
+    canvas.width = 800;
+    canvas.height = 600;
+    const ctx = canvas.getContext('2d');
+    
+    // 绘制背景
+    const gradient = ctx.createLinearGradient(0, 0, 0, 600);
+    gradient.addColorStop(0, '#FFE4E1');
+    gradient.addColorStop(0.5, '#FFF0F5');
+    gradient.addColorStop(1, '#FFE4E1');
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, 800, 600);
+    
+    // 绘制标题
+    ctx.font = 'bold 52px Arial';
+    ctx.fillStyle = '#FF69B4';
+    ctx.textAlign = 'center';
+    ctx.fillText('🎂 亦果，生日快乐！🎂', 400, 180);
+    
+    // 绘制英文标题
+    ctx.font = '32px Arial';
+    ctx.fillStyle = '#FF1493';
+    ctx.fillText('Happy 20th Birthday!', 400, 240);
+    
+    // 尝试绘制带图片的贺卡
+    const existingImg = document.querySelector('#birthday-text img');
+    
+    function downloadWithImage() {
+        // 绘制图片
+        if (existingImg && existingImg.complete) {
+            ctx.drawImage(existingImg, 300, 260, 200, 120);
+        }
+        
+        // 绘制祝福语
+        ctx.font = '24px Arial';
+        ctx.fillStyle = '#333';
+        if (existingImg && existingImg.complete) {
+            ctx.fillText('愿你每一天都充满欢笑与幸福', 400, 420);
+            ctx.fillText('未来的日子更加精彩！', 400, 450);
+        } else {
+            ctx.fillText('愿你每一天都充满欢笑与幸福', 400, 380);
+            ctx.fillText('未来的日子更加精彩！', 400, 410);
+        }
+        
+        // 绘制图标
+        ctx.font = '60px Arial';
+        ctx.fillText('🎉', 150, 500);
+        ctx.fillText('🎁', 400, 500);
+        ctx.fillText('🎈', 650, 500);
+        
+        // 下载图片
+        const link = document.createElement('a');
+        link.href = canvas.toDataURL('image/png');
+        link.download = '亦果-生日快乐.png';
+        link.click();
+    }
+    
+    // 如果图片已加载，直接下载
+    if (existingImg && existingImg.complete) {
+        downloadWithImage();
+    } else {
+        // 尝试加载图片
+        const img = new Image();
+        img.onload = function() {
+            // 使用新加载的图片
+            existingImg && existingImg.parentNode && (existingImg.src = img.src);
+            downloadWithImage();
+        };
+        img.onerror = function() {
+            // 即使图片加载失败，也要下载贺卡
+            downloadWithImage();
+        };
+        img.src = 'wishes.jpg';
+    }
+});
+
+animate();
+
+window.addEventListener('resize', () => {
+    camera.aspect = innerWidth / innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth, innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+});
+
+function setBirthdayPhoto(url) {
+    CONFIG.birthdayPhoto = url;
+    console.log('Birthday photo set:', url);
+}
+
+function setPersonalPhoto(url) {
+    CONFIG.personalPhoto = url;
+    console.log('Personal photo set:', url);
+}
+
+window.setBirthdayPhoto = setBirthdayPhoto;
+window.setPersonalPhoto = setPersonalPhoto;
+
+console.log('=== 礼盒专业升级版说明 ===');
+console.log('1. 礼盒圆角和倒角：复杂几何模型，多层圆角和柔和过渡');
+console.log('2. 真实彩带：CatmullRomCurve3自然弯曲，飘动动画');
+console.log('3. 专业材质：多层物理材质，纹理，高光，清漆效果');
+console.log('4. 细节装饰：缎带纹理、小珠子、金属质感');
+console.log('5. 保留所有功能：背景、蛋糕、贺卡等');
+
+// 贪吃蛇游戏逻辑
+const CANVAS_WIDTH = 400;
+const CANVAS_HEIGHT = 400;
+const GRID_SIZE = 20;
+const GRID_WIDTH = CANVAS_WIDTH / GRID_SIZE;
+const GRID_HEIGHT = CANVAS_HEIGHT / GRID_SIZE;
+
+let snake = [];
+let food = {};
+let direction = 'right';
+let nextDirection = 'right';
+let score = 0;
+let gameInterval;
+let gameSpeed = 150;
+let hole = null;
+let gameWon = false;
+
+const canvas = document.getElementById('snake-canvas');
+const ctx = canvas.getContext('2d');
+const scoreElement = document.getElementById('snake-score');
+const gameOverElement = document.getElementById('snake-game-over');
+const finalScoreElement = document.getElementById('snake-final-score');
+const restartBtn = document.getElementById('snake-restart-btn');
+const snakeGameModal = document.getElementById('snake-game-modal');
+const closeSnakeModalBtn = document.getElementById('close-snake-modal');
+
+function initSnakeGame() {
+    snake = [
+        { x: 10, y: 10 },
+        { x: 9, y: 10 },
+        { x: 8, y: 10 }
+    ];
+    direction = 'right';
+    nextDirection = 'right';
+    score = 0;
+    hole = null;
+    gameWon = false;
+    scoreElement.textContent = score;
+    gameOverElement.style.display = 'none';
+    generateFood();
+    if (gameInterval) {
+        clearInterval(gameInterval);
+    }
+    gameInterval = setInterval(gameLoop, gameSpeed);
+}
+
+function generateFood() {
+    food = {
+        x: Math.floor(Math.random() * GRID_WIDTH),
+        y: Math.floor(Math.random() * GRID_HEIGHT)
+    };
+    for (let segment of snake) {
+        if (segment.x === food.x && segment.y === food.y) {
+            generateFood();
+            return;
+        }
+    }
+}
+
+function gameLoop() {
+    direction = nextDirection;
+    const head = { ...snake[0] };
+    switch (direction) {
+        case 'up':
+            head.y -= 1;
+            break;
+        case 'down':
+            head.y += 1;
+            break;
+        case 'left':
+            head.x -= 1;
+            break;
+        case 'right':
+            head.x += 1;
+            break;
+    }
+    if (head.x < 0) {
+        head.x = GRID_WIDTH - 1;
+    } else if (head.x >= GRID_WIDTH) {
+        head.x = 0;
+    }
+    if (head.y < 0) {
+        head.y = GRID_HEIGHT - 1;
+    } else if (head.y >= GRID_HEIGHT) {
+        head.y = 0;
+    }
+    let collision = false;
+    for (let i = 1; i < snake.length; i++) {
+        if (head.x === snake[i].x && head.y === snake[i].y) {
+            collision = true;
+            break;
+        }
+    }
+    if (collision) {
+        gameOver();
+        return;
+    }
+    if (score >= 20 && !hole) {
+        hole = {
+            x: Math.floor(GRID_WIDTH / 2),
+            y: Math.floor(GRID_HEIGHT / 2)
+        };
+    }
+    const headInHole = hole && head.x === hole.x && head.y === hole.y;
+    if (headInHole) {
+        snake.shift();
+        if (snake.length === 0) {
+            gameWon = true;
+            gameOver();
+            return;
+        }
+    } else {
+        snake.unshift(head);
+        if (score < 20) {
+            if (head.x === food.x && head.y === food.y) {
+                score += 1;
+                scoreElement.textContent = score;
+                generateFood();
+                if (gameSpeed > 50) {
+                    gameSpeed -= 5;
+                    clearInterval(gameInterval);
+                    gameInterval = setInterval(gameLoop, gameSpeed);
+                }
+            } else {
+                snake.pop();
+            }
+        } else {
+            snake.pop();
+        }
+    }
+    drawGame();
+}
+
+function drawGame() {
+    ctx.fillStyle = '#111';
+    ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+    if (hole) {
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(hole.x * GRID_SIZE, hole.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(hole.x * GRID_SIZE, hole.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+    }
+    ctx.fillStyle = '#4CAF50';
+    for (let segment of snake) {
+        ctx.fillRect(segment.x * GRID_SIZE, segment.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        ctx.strokeStyle = '#333';
+        ctx.strokeRect(segment.x * GRID_SIZE, segment.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+    }
+    if (score < 20) {
+        ctx.fillStyle = '#FF5722';
+        ctx.fillRect(food.x * GRID_SIZE, food.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        ctx.strokeStyle = '#333';
+        ctx.strokeRect(food.x * GRID_SIZE, food.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+    }
+}
+
+function gameOver() {
+    clearInterval(gameInterval);
+    finalScoreElement.textContent = score;
+    const gameOverTitle = document.getElementById('snake-game-over-title');
+    if (gameWon) {
+        gameOverTitle.textContent = '有惊喜！';
+        // 游戏胜利后，关闭游戏弹窗，显示贺卡
+        setTimeout(() => {
+            snakeGameModal.style.display = 'none';
+            const bdayText = document.getElementById('birthday-text');
+            bdayText.style.opacity = '1';
+            bdayText.style.transform = 'translateX(-50%) translateY(-50%)';
+        }, 2000);
+    } else {
+        gameOverTitle.textContent = '游戏结束';
+    }
+    gameOverElement.style.display = 'block';
+}
+
+document.addEventListener('keydown', function(e) {
+    if (snakeGameModal.style.display === 'flex') {
+        switch (e.key) {
+            case 'ArrowUp':
+                if (direction !== 'down') {
+                    nextDirection = 'up';
+                }
+                break;
+            case 'ArrowDown':
+                if (direction !== 'up') {
+                    nextDirection = 'down';
+                }
+                break;
+            case 'ArrowLeft':
+                if (direction !== 'right') {
+                    nextDirection = 'left';
+                }
+                break;
+            case 'ArrowRight':
+                if (direction !== 'left') {
+                    nextDirection = 'right';
+                }
+                break;
+        }
+    }
+});
+
+document.querySelector('.touch-btn.up').addEventListener('click', function() {
+    if (direction !== 'down') {
+        nextDirection = 'up';
+    }
+});
+
+document.querySelector('.touch-btn.down').addEventListener('click', function() {
+    if (direction !== 'up') {
+        nextDirection = 'down';
+    }
+});
+
+document.querySelector('.touch-btn.left').addEventListener('click', function() {
+    if (direction !== 'right') {
+        nextDirection = 'left';
+    }
+});
+
+document.querySelector('.touch-btn.right').addEventListener('click', function() {
+    if (direction !== 'left') {
+        nextDirection = 'right';
+    }
+});
+
+restartBtn.addEventListener('click', initSnakeGame);
+
+closeSnakeModalBtn.addEventListener('click', () => {
+    snakeGameModal.style.display = 'none';
+    const bdayText = document.getElementById('birthday-text');
+    bdayText.style.opacity = '1';
+    bdayText.style.transform = 'translateX(-50%) translateY(-50%)';
+});
+
+
+</script>
 </body>
 </html>
